@@ -323,3 +323,11 @@ main .section.highlight {
   margin: 0;
   padding: 40px 0;
 }
+
+main .yellow {
+  background-color: #fff8e1;
+}
+
+main .red {
+  color: #ffffff;
+}
