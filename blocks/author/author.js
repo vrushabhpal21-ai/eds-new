@@ -21,17 +21,25 @@ export default function decorate(block) {
     let to=document.createElement("th");to.appendChild(document.createTextNode(topics));tr.append(to);
     table.append(tr);
     [...block.children].forEach((row,r) => {
-       let trow=document.createElement("tr");  
-      [...row.children].forEach((col,c) => {
-        console.log(" Row : Col  ",r,c);
-        let tcol=document.createElement("td");
-           tcol.appendChild(col);
-           trow.append(tcol);
-           row.replaceWith(trow);
-      });
-      table.append(trow);
+        if(r==0){
+            let row1=document.createElement("tr");
+            [...row.children].forEach((col,c) => {
+                let row1Col=document.createElement("th");
+                row1Col.appendChild(document.createTextNode(col.textContent));
+                row1Col.colSpan=2;
+                row1.append(row1Col);
+                //console.log(r,col.textContent);
+            });
+            table.append(row1);
+        }else{
+            let rowelse=document.createElement("tr");
+            [...row.children].forEach((col,c) => {
+                let rowelseCol=document.createElement("td");
+                //console.log(r,col.textContent);
+                rowelseCol.appendChild(document.createTextNode(col.textContent));
+                rowelse.append(rowelseCol);
+            });
+            table.append(rowelse);
+        }
     });
-    block.append(headingDiv);
-    block.append(table);
-  }
-  
+}
