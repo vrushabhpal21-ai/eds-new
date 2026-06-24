@@ -46,6 +46,7 @@ async function createSelectMap(jsonURL){
      div.append(select);
     return div;
 }
+
 async function createTable(jsonURL,val) {
 
     let  pathname = null;
