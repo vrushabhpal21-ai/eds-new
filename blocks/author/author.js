@@ -1,47 +1,56 @@
-import { fetchPlaceholders,getMetadata } from '../../scripts/aem.js';
-const placeholders = await fetchPlaceholders(getMetadata("locale"));
-console.log(placeholders);
-const { authorDetails,firstName,lastName,occupation,bio,topics} = placeholders;
+import { fetchPlaceholders, getMetadata } from '../../scripts/aem.js';
 
-export default function decorate(block) {
-    const headingDiv=document.createElement('div');
-    headingDiv.classList.add("table-heading");
-    const htext=document.createTextNode(authorDetails);
-    const headingH1=document.createElement('h1');
-    headingH1.append(htext);
-    headingDiv.append(headingH1);
-    
-    const table = document.createElement('table');
-    let tr=document.createElement("tr");
-    //let ad=document.createElement("th");ad.appendChild(document.createTextNode(authorDetails));tr.append(ad);
-    let fn=document.createElement("th");fn.appendChild(document.createTextNode(firstName));tr.append(fn);
-    let ln=document.createElement("th");ln.appendChild(document.createTextNode(lastName));tr.append(ln);
-    let oc=document.createElement("th");oc.appendChild(document.createTextNode(occupation));tr.append(oc);
-    let bi=document.createElement("th");bi.appendChild(document.createTextNode(bio));tr.append(bi);
-    let to=document.createElement("th");to.appendChild(document.createTextNode(topics));tr.append(to);
-    table.append(tr);
-    [...block.children].forEach((row,r) => {
-        if(r==0){
-            let row1=document.createElement("tr");
-            [...row.children].forEach((col,c) => {
-                let row1Col=document.createElement("th");
-                row1Col.appendChild(document.createTextNode(col.textContent));
-                row1Col.colSpan=2;
-                row1.append(row1Col);
-                //console.log(r,col.textContent);
-            });
-            table.append(row1);
-        }else{
-            let rowelse=document.createElement("tr");
-            [...row.children].forEach((col,c) => {
-                let rowelseCol=document.createElement("td");
-                //console.log(r,col.textContent);
-                rowelseCol.appendChild(document.createTextNode(col.textContent));
-                rowelse.append(rowelseCol);
-            });
-            table.append(rowelse);
-        }
-    });
-    block.innerHTML = '';
-    block.append(headingDiv, table);
+export default async function decorate(block) {
+  const placeholders = await fetchPlaceholders(getMetadata('locale'));
+  console.log(placeholders);
+
+  const {
+    header,
+    fnameKey,
+    lnameKey,
+    roleKey,
+    orgKey,
+    cntrKey,
+    firstName,
+    lastName,
+    role,
+    organization,
+    country,
+  } = placeholders;
+
+  const table = document.createElement('table');
+  table.classList.add('author-table');
+
+  // Row 1 - Header
+  const headerRow = document.createElement('tr');
+  const headerCell = document.createElement('th');
+  headerCell.colSpan = 2;
+  headerCell.textContent = header || 'Author';
+  headerRow.append(headerCell);
+  table.append(headerRow);
+
+  // Helper function to create label-value row
+  const createRow = (label, value) => {
+    const tr = document.createElement('tr');
+
+    const labelTd = document.createElement('td');
+    labelTd.textContent = label || '';
+
+    const valueTd = document.createElement('td');
+    valueTd.textContent = value || '';
+
+    tr.append(labelTd, valueTd);
+    return tr;
+  };
+
+  table.append(
+    createRow(fnameKey, firstName),
+    createRow(lnameKey, lastName),
+    createRow(roleKey, role),
+    createRow(orgKey, organization),
+    createRow(cntrKey, country),
+  );
+
+  block.innerHTML = '';
+  block.append(table);
 }
