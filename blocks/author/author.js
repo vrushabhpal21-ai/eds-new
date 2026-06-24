@@ -42,4 +42,6 @@ export default function decorate(block) {
             table.append(rowelse);
         }
     });
+    block.innerHTML = '';
+    block.append(headingDiv, table);
 }
